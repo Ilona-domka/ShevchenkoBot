@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 # Функція для зчитування віршів з файлу
 def read_poems():
     try:
-        with open(r'D:\bot\ShevchenkoBot\poems\shevchenko_poems.txt', 'r', encoding='utf-8') as file:
+        with open(r'D:\bot\ShevchenkoBot\shevchenko_poems.txt', 'r', encoding='utf-8') as file:
             return file.read()
     except Exception as e:
         logger.error(f"Помилка при зчитуванні файлу: {e}")
@@ -137,8 +137,13 @@ def main():
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply_poem))
 
-    application.run_polling()
-
+    # Заміна polling на webhook
+    application.run_webhook(
+        listen="0.0.0.0",  # Це дозволяє отримувати запити з будь-якого IP
+        port=5000,  # Вказуємо порт для веб-сервера
+        url_path=token,  # шлях для запитів webhook
+        webhook_url="https://shevchenkobot.onrender.com".format(token)  # URL для webhook (посилання на ваш сервер)
+    )
 
 if __name__ == '__main__':
     main()
